@@ -1,8 +1,5 @@
----
-id: tests
-title: Testing
-sidebar_label: Testing
----
+# Testing
+
 ## Jest
 
 To test a component which use RNCamera, you need to create a react-native-camera.js file inside your **mocks** folder on the root of your project with the following content:

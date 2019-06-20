@@ -94,7 +94,7 @@
     }
 }
 
-+ (UIImage *)convertBufferToUIImage:(CMSampleBufferRef)sampleBuffer previewSize:(CGSize)previewSize position:(NSInteger)position
++ (UIImage *)convertBufferToUIImage:(CMSampleBufferRef)sampleBuffer previewSize:(CGSize)previewSize
 {
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     CIImage *ciImage = [CIImage imageWithCVPixelBuffer:imageBuffer];
@@ -104,32 +104,25 @@
         orientation = [[UIApplication sharedApplication] statusBarOrientation];
     });
     UIInterfaceOrientation curOrientation = orientation;
-    NSInteger orientationToApply = 1;
-    BOOL isBackCamera = position == 1;
-    if (curOrientation == UIInterfaceOrientationLandscapeLeft){
-        orientationToApply = isBackCamera ? kCGImagePropertyOrientationDown : kCGImagePropertyOrientationUpMirrored;
-    } else if (curOrientation == UIInterfaceOrientationLandscapeRight){
-        orientationToApply = isBackCamera ? kCGImagePropertyOrientationUp  : kCGImagePropertyOrientationDownMirrored;
-    } else if (curOrientation == UIInterfaceOrientationPortrait){
-        orientationToApply = isBackCamera ? kCGImagePropertyOrientationRight : kCGImagePropertyOrientationLeftMirrored;
-    } else if (curOrientation == UIInterfaceOrientationPortraitUpsideDown){
-        orientationToApply = isBackCamera ? kCGImagePropertyOrientationLeft : kCGImagePropertyOrientationRightMirrored;
-    }
-    ciImage = [ciImage imageByApplyingOrientation:orientationToApply];
 
-    // scale down CIImage
+    if (curOrientation == UIInterfaceOrientationLandscapeLeft){
+        ciImage = [ciImage imageByApplyingOrientation:3];
+    } else if (curOrientation == UIInterfaceOrientationLandscapeRight){
+        ciImage = [ciImage imageByApplyingOrientation:1];
+    } else if (curOrientation == UIInterfaceOrientationPortrait){
+        ciImage = [ciImage imageByApplyingOrientation:6];
+    } else if (curOrientation == UIInterfaceOrientationPortraitUpsideDown){
+        ciImage = [ciImage imageByApplyingOrientation:8];
+    }
     float bufferWidth = CVPixelBufferGetWidth(imageBuffer);
     float bufferHeight = CVPixelBufferGetHeight(imageBuffer);
-    float scale = scale = bufferHeight>bufferWidth ? 720 / bufferWidth : 720 / bufferHeight;;
-    if (position == 1) {
-        scale = bufferHeight>bufferWidth ? 400 / bufferWidth : 400 / bufferHeight;
-    }
+    // scale down CIImage
+    float scale = bufferHeight>bufferWidth ? 400 / bufferWidth : 400 / bufferHeight;
     CIFilter* scaleFilter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
     [scaleFilter setValue:ciImage forKey:kCIInputImageKey];
     [scaleFilter setValue:@(scale) forKey:kCIInputScaleKey];
     [scaleFilter setValue:@(1) forKey:kCIInputAspectRatioKey];
     ciImage = scaleFilter.outputImage;
-
     // convert to UIImage and crop to preview aspect ratio
     NSDictionary *contextOptions = @{kCIContextUseSoftwareRenderer : @(false)};
     CIContext *temporaryContext = [CIContext contextWithOptions:contextOptions];

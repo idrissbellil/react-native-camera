@@ -18,23 +18,21 @@ package com.google.android.cameraview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
-import android.hardware.Camera;
+import android.graphics.SurfaceTexture;
 import android.media.CamcorderProfile;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.graphics.SurfaceTexture;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.os.ParcelableCompat;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
+import androidx.core.view.ViewCompat;
 
 import com.facebook.react.bridge.ReadableMap;
 
@@ -223,7 +221,6 @@ public class CameraView extends FrameLayout {
         state.ratio = getAspectRatio();
         state.autoFocus = getAutoFocus();
         state.flash = getFlash();
-        state.exposure = getExposureCompensation();
         state.focusDepth = getFocusDepth();
         state.zoom = getZoom();
         state.whiteBalance = getWhiteBalance();
@@ -244,7 +241,6 @@ public class CameraView extends FrameLayout {
         setAspectRatio(ss.ratio);
         setAutoFocus(ss.autoFocus);
         setFlash(ss.flash);
-        setExposureCompensation(ss.exposure);
         setFocusDepth(ss.focusDepth);
         setZoom(ss.zoom);
         setWhiteBalance(ss.whiteBalance);
@@ -478,15 +474,6 @@ public class CameraView extends FrameLayout {
         return mImpl.getFlash();
     }
 
-    public void setExposureCompensation(int exposure) {
-        mImpl.setExposureCompensation(exposure);
-    }
-
-    public int getExposureCompensation() {
-        return mImpl.getExposureCompensation();
-    }
-
-
     /**
      * Gets the camera orientation relative to the devices native orientation.
      *
@@ -494,16 +481,6 @@ public class CameraView extends FrameLayout {
      */
     public int getCameraOrientation() {
         return mImpl.getCameraOrientation();
-    }
-    
-    /**
-     * Sets the auto focus point.
-     *
-     * @param x sets the x coordinate for camera auto focus
-     * @param y sets the y coordinate for camera auto focus
-     */
-    public void setAutoFocusPointOfInterest(float x, float y) {
-        mImpl.setFocusArea(x, y);
     }
 
     public void setFocusDepth(float value) {
@@ -653,8 +630,6 @@ public class CameraView extends FrameLayout {
         @Flash
         int flash;
 
-        int exposure;
-
         float focusDepth;
 
         float zoom;
@@ -672,7 +647,6 @@ public class CameraView extends FrameLayout {
             ratio = source.readParcelable(loader);
             autoFocus = source.readByte() != 0;
             flash = source.readInt();
-            exposure = source.readInt();
             focusDepth = source.readFloat();
             zoom = source.readFloat();
             whiteBalance = source.readInt();
@@ -691,7 +665,6 @@ public class CameraView extends FrameLayout {
             out.writeParcelable(ratio, 0);
             out.writeByte((byte) (autoFocus ? 1 : 0));
             out.writeInt(flash);
-            out.writeInt(exposure);
             out.writeFloat(focusDepth);
             out.writeFloat(zoom);
             out.writeInt(whiteBalance);

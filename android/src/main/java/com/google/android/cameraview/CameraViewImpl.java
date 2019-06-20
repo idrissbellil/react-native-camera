@@ -76,10 +76,6 @@ abstract class CameraViewImpl {
 
     abstract int getFlash();
 
-    abstract void setExposureCompensation(int exposure);
-
-    abstract int getExposureCompensation();
-
     abstract void takePicture(ReadableMap options);
 
     abstract boolean record(String path, int maxDuration, int maxFileSize,
@@ -92,8 +88,6 @@ abstract class CameraViewImpl {
     abstract void setDisplayOrientation(int displayOrientation);
 
     abstract void setDeviceOrientation(int deviceOrientation);
-    
-    abstract void setFocusArea(float x, float y);
 
     abstract void setFocusDepth(float value);
 
